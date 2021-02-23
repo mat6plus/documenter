@@ -1,0 +1,2 @@
+Main Color: #827ffe (buttons)(links)
+Background Color: #dcdcdc | #ffffff

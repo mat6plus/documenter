@@ -1,0 +1,11 @@
+On opening the web app url, user is directed to the landing page. The landing page just gives basic information about the app and the links to LOGIN and SIGNUP is presented.
+
+New user's are redirected to signup page while registered user's are taking to login page. On successful sign up, user's are redirected to the login page. On successful authentication of a user, user's are redirected to the search landing page with a nav bar through which they can update profile, change password, and settings, and logout of the appllication also containing the search bar and possibly recent searches by users.
+
+When a user searches for a topic, suggesttions should appear bellow the search bar containing possible answers.And when the user hit the return key, there should be a possible loading progress bar and then displays the list of relevant result in cards. Clicking on a result should take user to the particular card displaying details that must have been entered with a back to search button or next result etc.
+
+The card will contain;
+1. Solution Title
+2. Tags
+3. Problem Scope ( The problem with an Image )
+4. Solution (How it was resolved possible with an Image)
