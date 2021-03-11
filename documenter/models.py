@@ -27,3 +27,10 @@ class Searcher (models.Model):
     def get_absolute_url(self):
             return reverse('title:description', args=[self.created.year, self.created.month, self.created.day, self.slug])
 
+
+class Author(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    profile_picture = models.ImageField()
+
+    def __str__(self):
+        return self.user.username
