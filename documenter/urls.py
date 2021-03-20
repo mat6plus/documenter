@@ -1,8 +1,10 @@
 from django.urls import path
 
-from .views import searchview 
+from documenter.views import searchView, SearchResultView, SearchDetails
 
 
 urlpatterns = [
-    path('', searchview, name='home'),
+    path('', searchView, name='home'),
+    path('result', SearchResultView, name='result'),
+    path('details', SearchDetails, name='details'),
 ]
