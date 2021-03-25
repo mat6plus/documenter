@@ -35,7 +35,7 @@ def signupView(request):
     if request.user.is_authenticated:
         return redirect('/')
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = SignUpForm(data=request.POST)
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get('email')
