@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import signup
+from .views import signupView, ChangeProfileView
 from django.contrib.auth.views import LoginView, LogoutView, \
     PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, \
     PasswordResetDoneView
@@ -14,7 +14,7 @@ urlpatterns = [
         template_name='accounts/partials/login.html',
     ), name='login'),
 
-    path('signup/', signup, name='signup'),
+    path('register/', signupView, name='register'),
 
     path('logout/', LogoutView.as_view(), name='logout'),
 
@@ -46,4 +46,5 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
+     path('change/profile/', ChangeProfileView.as_view(), name='change_profile'),
 ]

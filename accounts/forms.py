@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import ValidationError
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
@@ -6,6 +7,8 @@ from django.contrib.auth import get_user_model, password_validation
 
 User = get_user_model()
 
+class UserCacheMixin:
+    user_cache = None
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
@@ -78,3 +81,4 @@ class UserEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['email'].required = True
+

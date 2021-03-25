@@ -26,15 +26,14 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-t-50 p-b-90">
-				<form method="POST" class="login100-form validate-form flex-sb flex-w" 
-										action="{% url 'django.contrib.auth.views.login' %}">
+				<form method="POST" class="login100-form validate-form flex-sb flex-w" action={% url 'accounts:login' %}>
 					{% csrf_token %}
 					<span class="login100-form-title p-b-51">
 						Login
 					</span>
 
-					<div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
-						<input class="input100" type="text" name="username" placeholder="Username">
+					<div class="wrap-input100 validate-input m-b-16" data-validate = "Email is required">
+						<input class="input100" type="text" name="username" placeholder="User Email">
 						<span class="focus-input100"></span>
 					</div>
 					
@@ -53,7 +52,7 @@
 						</div>
 
 						<div>
-							<a href="forgot_password.html" class="txt1">
+							<a href="{% url 'accounts:password_reset' %}" class="txt1">
 								Forgot Password?
 							</a>
 						</div>
@@ -69,7 +68,7 @@
 						Don't have an account? 
 					</div>
 					<div >
-							<a href="register.html" class="txt1">
+							<a href="{% url 'accounts:register' %}" class="txt1">
 								Create One
 							</a>
 					</div>
@@ -83,7 +82,8 @@
 	<div id="dropDownSelect1"></div>
 	
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/main2.js' %}"></script>
+	<script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
     <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
