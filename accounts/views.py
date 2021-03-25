@@ -43,7 +43,7 @@ def signupView(request):
             password2 = form.cleaned_data.get('password')
 
             if password != password2:
-                messages.add_message(request, messages.ERROR, 'Password Mismatch')
+                messages.add_message(request, messages.ERROR, 'Password do not match')
             
             if not validate_email(email):
                 messages.add_message(request, messages.ERROR, 'Please Enter a Valid Email')
