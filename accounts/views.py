@@ -10,11 +10,14 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from django.shortcuts import render,redirect, get_object_or_404
+from django.contrib.sites.shortcuts import get_current_site
 from accounts.token import account_activation_token
 from django.db.models import Count
 from django.core.mail import send_mail
 from django.contrib import messages
 from validate_email import validate_email
+from django.http import HttpResponse
+from django.utils.encoding import force_bytes, force_text
 
 from django.conf import settings
 from django.views.generic import View, FormView
@@ -30,51 +33,39 @@ from .forms import SignUpForm, UserEditForm
 
 User = get_user_model()
 
+''' def homePage(request):
+    context=[]
+    return render (request, 'documenter/_partials/home.html')
+ '''
 
 def signupView(request):
+    
     if request.user.is_authenticated:
-        return redirect('/')
+        return redirect('documenter:home')
+
     if request.method == 'POST':
-        form = SignUpForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            password2 = form.cleaned_data.get('password')
-
-            if password != password2:
-                messages.add_message(request, messages.ERROR, 'Password do not match')
-            
-            if not validate_email(email):
-                messages.add_message(request, messages.ERROR, 'Please Enter a Valid Email')
-            
-            if User.objects.filter(email).exist():
-                messages.add_message(request, messages.ERROR, 'Email Already Exist, Choose Another')
-
-            user = authenticate(email=email, password=password)
-            login(request, user)
-            context = {
-                    'email': user.email,
-                    'protocol': 'https' if request.is_secure() else "http",
-                    'domain': request.get_host(),
-                }
-            html = render_to_string('accounts/email/welcome.html', context)
-            text = render_to_string('accounts/email/welcome.txt', context)
-            send_mail(
-                    'Welcome to Documenter Appllication!',
-                    message=text,
-                    html_message=html,
-                    recipient_list=[user.email],
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    fail_silently=False,
-                )
-            return redirect('register')
-            return redirect('/')
-        else:
-            return render(request, 'accounts/partials/register.html', {'form': form})
+        registerForm = SignUpForm(request.POST)
+        if registerForm.is_valid():
+            user = registerForm.save(commit=False)
+            user.first_name = registerForm.cleaned_data['first_name']
+            user.last_name = registerForm.cleaned_data['last_name']
+            user.email = registerForm.cleaned_data['email']
+            user.set_password(registerForm.cleaned_data['password'])
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(request)
+            subject = 'Activate your Account'
+            message = render_to_string('accounts/partials/account_activation_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            user.email_user(subject=subject, message=message)
+            return HttpResponse('Registered succesfully and Activation sent')
     else:
-        form = UserCreationForm()
-        return render(request, 'accounts/partials/register.html', {'form': form})
+        registerForm = SignUpForm()
+    return render(request, 'accounts/partials/register.html', {'form': registerForm})
 
 def loginView(request):
     if request.user.is_authenticated:

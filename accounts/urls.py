@@ -1,4 +1,5 @@
 from django.urls import path
+from . import views
 from .views import signupView, ChangeProfileView
 from django.contrib.auth.views import LoginView, LogoutView, \
     PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, \
@@ -13,6 +14,9 @@ urlpatterns = [
         redirect_authenticated_user=True,
         template_name='accounts/partials/login.html',
     ), name='login'),
+
+   # path('home/', signupView, name='home'),
+    path('activate/<slug:uidb64>/<slug:token>)/', views.account_activate, name='activate'),
 
     path('register/', signupView, name='register'),
 

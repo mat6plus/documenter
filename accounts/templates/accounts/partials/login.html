@@ -32,14 +32,20 @@
 						Login
 					</span>
 
+					{% if form.errors %}
+					<div class="alert alert-primary" role="alert">
+						Error: Username or Password not correct!
+					</div>
+				   {% endif %}
+
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Email is required">
-						<input class="input100" type="text" name="username" placeholder="User Email">
+						<input class="input100" type="text" name="email" placeholder="User Email">
 						<span class="focus-input100"></span>
 					</div>
 					
 					
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-						<input class="input100" type="password" name="pass" placeholder="Password">
+						<input class="input100" type="password" name="password" placeholder="Password">
 						<span class="focus-input100"></span>
 					</div>
 					

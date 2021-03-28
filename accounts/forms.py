@@ -25,7 +25,7 @@ class SignUpForm(UserCreationForm):
             """Ensure email uniqueness."""
             email = self.cleaned_data.get("email")
             if User.objects.filter(email=email).exists():
-                raise forms.ValidationError("The email address provided is currently by another account.")
+                raise forms.ValidationError("Email Already Exist")
             return email
 
         def clean_password2(self):
