@@ -18,6 +18,7 @@ from django.contrib import messages
 from validate_email import validate_email
 from django.http import HttpResponse
 from django.utils.encoding import force_bytes, force_text
+from .models import CustomUser, Profile
 
 from django.conf import settings
 from django.views.generic import View, FormView
@@ -53,6 +54,7 @@ def signupView(request):
             user.set_password(registerForm.cleaned_data['password'])
             user.is_active = False
             user.save()
+            login(request, user)
             current_site = get_current_site(request)
             subject = 'Activate your Account'
             message = render_to_string('accounts/partials/account_activation_email.html', {
@@ -63,6 +65,7 @@ def signupView(request):
             })
             user.email_user(subject=subject, message=message)
             return HttpResponse('Registered succesfully and Activation sent')
+            return redirect('documenter:login')
     else:
         registerForm = SignUpForm()
     return render(request, 'accounts/partials/register.html', {'form': registerForm})

@@ -30,6 +30,14 @@
 						Register
 					</span>
 
+					{% if messages %}
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+
                     <div class="wrap-input100 validate-input m-b-16" data-validate = "">
 						<input class="input100" type="text" name="first_name" placeholder="Enter First Name">
 						<span class="focus-input100"></span>
