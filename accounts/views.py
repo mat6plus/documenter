@@ -63,8 +63,8 @@ def signupView(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            user.email_user(subject=subject, message=message)
-            return HttpResponse('Registered succesfully and Activation sent')
+            user.send_mail(subject=subject, message=message)
+            messages.SUCCESS(request, f'Registered succesfully and Activation Email Sent')
             return redirect('documenter:login')
     else:
         registerForm = SignUpForm()

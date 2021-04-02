@@ -158,3 +158,13 @@ INTERNAL_IPS = [
 
 EMAIL_BACKEND: 'django.core.mail.backends.console.EmailBackend'
 
+# Email Settings
+
+EMAIL_HOST: ''
+EMAIL_PORT: ''
+EMAIL_HOST_USER:''
+EMAIL_HOST_PASSWORD:''
+EMAIL_USE_TSL: ''
+EMAIL_USE_SSL: ''
+
+
