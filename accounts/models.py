@@ -7,7 +7,6 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 from django_countries.fields import CountryField
-
 from .managers import CustomUserManager
 
 # Create your models here.
@@ -53,10 +52,9 @@ class CreateUser(AbstractUser):
         return user """
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
-    email = models.EmailField(max_length=150)
+    email = models.EmailField(max_length=150, default=False)
     signup_confirmation = models.BooleanField(default=False)
 
     def __str__(self):

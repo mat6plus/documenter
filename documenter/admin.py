@@ -6,8 +6,8 @@ from .models import Searcher
 @admin.register (Searcher)
 
 class SearchAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'author','created')
-    list_filter = ('created', 'author')
+    list_display = ('title', 'slug','created','author')
+    list_filter = ('created','title')
     search_fields = ('title', 'description')
     prepopulated_fields = {'slug': ('title',)}
     raw_id_fields = ('author',)

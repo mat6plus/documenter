@@ -30,9 +30,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import views as auth_views
 from django.contrib.auth import get_user_model, login
 from django.template.loader import render_to_string
-from .forms import SignUpForm, UserEditForm
+from .forms import SignUpForm, UserEditForm, LoginForm
 
-User = get_user_model()
 
 ''' def homePage(request):
     context=[]
@@ -40,9 +39,6 @@ User = get_user_model()
  '''
 
 def signupView(request):
-    
-    if request.user.is_authenticated:
-        return redirect('documenter:home')
 
     if request.method == 'POST':
         registerForm = SignUpForm(request.POST)
@@ -78,10 +74,13 @@ def loginView(request):
             password = request.password.POST['password']
             user = authenticate(request, email=email, password=password)
             if user is not None:
-                return redirect('/')
+                form = login(request, user)
+                messages.SUCCESS(request, f'Welcome {email}')
+                return redirect('documenter/_partials/home.html')
             else:
-                form = AuthenticationForm(request.POST)
-                return render (request, 'documenter/partials/home.html', {'form':form})
+                messages.INFO(request, f'Your login failed')
+                form = LoginForm()
+                return render (request, 'accounts/partials/login.html', {'form':form})
 
 class ChangeProfileView(LoginRequiredMixin, FormView):
     template_name = 'accounts/partials/profile.html'

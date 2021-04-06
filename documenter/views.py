@@ -5,18 +5,18 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Searcher, Author
+from .models import Searcher
 from .forms import SearchForm, DocumentForm
 from taggit.models import Tag
 
 
 # Solution Author Information
 
-def get_author(user):
-    qs = Author.objects.filter(user=user)
-    if qs.exists():
-        return qs[0]
-    return None
+# def get_author(user):
+#     qs = Author.objects.filter(user=user)
+#     if qs.exists():
+#         return qs[0]
+#     return None
 
 # Create your views here.
 @login_required

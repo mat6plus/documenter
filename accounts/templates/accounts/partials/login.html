@@ -32,11 +32,11 @@
 						Login
 					</span>
 
-					{% if form.errors %}
-					<div class="alert alert-primary" role="alert">
-						Error: Username or Password not correct!
-					</div>
-				   {% endif %}
+						{% if form.errors %}
+							<div class="alert alert-primary" role="alert">
+								Error: Username or Password not correct!
+							</div>
+						{% endif %}
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Email is required">
 						<input class="input100" type="text" name="email" placeholder="User Email">

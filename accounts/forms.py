@@ -7,15 +7,8 @@ from django.contrib.auth import get_user_model, password_validation
 
 User = get_user_model()
 
-class UserCacheMixin:
-    user_cache = None
-
 class SignUpForm(UserCreationForm):
-    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     email = forms.EmailField(max_length=254, help_text='Required. Input a valid email address.')
-    password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
@@ -33,6 +26,13 @@ class SignUpForm(UserCreationForm):
                 if cd['password'] != cd['password2']:
                  raise forms.ValidationError('Passwords don\'t match.')
                 return cd['password2']
+    
+    def save(self, commit=True):
+        user = super(SignUpForm, self).save(commit=True)
+        user.email = self.cleaned_data['email']
+        if commit:
+            user.save()
+        return user
 """ 
 class ProfileUpdateForm(UserChangeForm):
     email = forms.EmailField(max_length=254, help_text='Required. Input a valid email address.')
