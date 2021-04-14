@@ -3,36 +3,42 @@ from django.forms import ValidationError
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth.models import User
+from accounts.models import CustomUser, Profile
 from django.contrib.auth import get_user_model, password_validation
 
 User = get_user_model()
 
 class SignUpForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     email = forms.EmailField(max_length=254, help_text='Required. Input a valid email address.')
 
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email', 'password', 'password2')
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2')
     
-        def clean_email(self):
-            """Ensure email uniqueness."""
-            email = self.cleaned_data.get("email")
-            if User.objects.filter(email=email).exists():
-                raise forms.ValidationError("Email Already Exist")
-            return email
+        # def clean_email(self):
+        #     """Ensure email uniqueness."""
+        #     email = self.cleaned_data.get("email")
+        #     if User.objects.filter(email=email).exists():
+        #         raise forms.ValidationError("Email Already Exist")
+        #     return email
 
-        def clean_password2(self):
-                cd = self.cleaned_data
-                if cd['password'] != cd['password2']:
-                 raise forms.ValidationError('Passwords don\'t match.')
-                return cd['password2']
+        # def clean_password2(self):
+        #         cd = self.cleaned_data
+        #         if cd['password'] != cd['password2']:
+        #          raise forms.ValidationError('Passwords don\'t match.')
+        #         return cd['password2']
     
-    def save(self, commit=True):
-        user = super(SignUpForm, self).save(commit=True)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user
+    # def save(self, commit=True):
+    #     user = super(SignUpForm, self).save(commit=True)
+    #     user.first_name = self.cleaned_data['first_name']
+    #     user.last_name = self.cleaned_data['last_name']
+    #     user.email = self.cleaned_data['email']
+        
+    #     if commit:
+    #         user.save()
+    #     return user
 """ 
 class ProfileUpdateForm(UserChangeForm):
     email = forms.EmailField(max_length=254, help_text='Required. Input a valid email address.')
@@ -74,7 +80,7 @@ class UserEditForm(forms.ModelForm):
             attrs={'placeholder': 'Firstname'}))
 
     class Meta:
-        model = User
+        model = Profile
         fields = ('email', 'first_name', 'last_name',)
 
     def __init__(self, *args, **kwargs):

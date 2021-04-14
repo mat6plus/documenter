@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-from .views import signupView, ChangeProfileView
+
+from accounts.views import signupView, ChangeProfileView
 from django.contrib.auth.views import LoginView, LogoutView, \
     PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, \
     PasswordResetDoneView
@@ -50,5 +51,5 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
-     path('change/profile/', ChangeProfileView.as_view(), name='change_profile'),
+    path('change/profile/', ChangeProfileView.as_view(), name='change_profile'),
 ]
