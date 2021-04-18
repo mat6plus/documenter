@@ -10,8 +10,9 @@ from accounts.token import account_activation_token
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View, FormView
-from validate_email import validate_email
+#from validate_email import validate_email
 from django.contrib.auth import get_user_model, login
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 from django.contrib.auth import authenticate, login, logout
@@ -21,77 +22,98 @@ from django.contrib.auth.decorators import login_required
 from accounts.models import *
 from accounts.forms import SignUpForm, UserEditForm
 
+User = get_user_model()
 
-
-def home(request):
-    context=[]
-    return render (request, 'documenter/_partials/home.html')
-
-def signupView(request):
-    if request.user.is_authenticated:
-        return redirect('documenter:home')
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.refresh_from_db()
-            user.profile.first_name = form.cleaned_data.get('first_name')
-            user.profile.last_name = form.cleaned_data.get('last_name')
-            user.profile.email = form.cleaned_data.get('email')
-            user.is_active = False
-            user.save()
-
-            messages.success(request, "Registration successful. An activation email has been sent" )
-            user.is_active = False
-            current_site = get_current_site(request)
-
-            subject = 'Activate your Documenter Account'
-            message = render_to_string('accounts/partials/account_activation_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            user.send_mail(subject=subject, message=message)
-            messages.SUCCESS(request, f'Registered succesfully and Activation Email Sent')
-            return redirect('accounts/partials/account_activation_sent.html')
-            
-            # context = {
-            #         'email': user.email,
-            #         'protocol': 'https' if request.is_secure() else "http",
-            #         'domain': request.get_host(),
-            #     }
-            # html = render_to_string('accounts/email/welcome.html', context)
-            # text = render_to_string('accounts/email/welcome.txt', context)
-            # send_mail(
-            #         'Welcome to Documenter Appllication!',
-            #         message=text,
-            #         html_message=html,
-            #         recipient_list=[user.email],
-            #         from_email=settings.DEFAULT_FROM_EMAIL,
-            #         fail_silently=False,
-            #     )
-            # # return HttpResponse('User Succesfully Registered')
-            # return redirect('accounts:login')
-        # else:
-        #     return render(request, 'accounts/partials/register.html', {'form': form})
-    else:
-        # messages.ERROR(request, 'Registration Failed, kindly check your Informations')
-        form = UserCreationForm()
-    return render(request, 'accounts/partials/register.html', {'form': form})
-
+# def home(request):
+#     context=[]
+#     return render (request, 'documenter/_partials/home.html')
 
 # def signupView(request):
-# 	if request.method == "POST":
-# 		form = SignUpForm(request.POST)
-# 		if form.is_valid():
-# 			user = form.save()
-# 			login(request, user)
-# 			messages.success(request, "Registration successful." )
-# 			return redirect("accounts:login")
-# 		messages.error(request, "Unsuccessful registration. Invalid information.")
-# 	form = SignUpForm
-# 	return render (request=request, template_name="accounts/partials/register.html", context={"register_form":form})
+#     if request.user.is_authenticated:
+#         return redirect('documenter:home')
+#     if request.method == 'POST':
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             user.refresh_from_db()
+#             user.profile.first_name = form.cleaned_data.get('first_name')
+#             user.profile.last_name = form.cleaned_data.get('last_name')
+#             user.profile.email = form.cleaned_data.get('email')
+#             user.is_active = False
+#             user.save()
+
+#             messages.success(request, "Registration successful. An activation email has been sent" )
+#             user.is_active = False
+#             current_site = get_current_site(request)
+
+#             subject = 'Activate your Documenter Account'
+#             message = render_to_string('accounts/partials/account_activation_email.html', {
+#                 'user': user,
+#                 'domain': current_site.domain,
+#                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+#                 'token': account_activation_token.make_token(user),
+#             })
+#             user.send_mail(subject=subject, message=message)
+#             messages.SUCCESS(request, f'Registered succesfully and Activation Email Sent')
+#             return redirect('accounts/partials/account_activation_sent.html')
+            
+#             # context = {
+#             #         'email': user.email,
+#             #         'protocol': 'https' if request.is_secure() else "http",
+#             #         'domain': request.get_host(),
+#             #     }
+#             # html = render_to_string('accounts/email/welcome.html', context)
+#             # text = render_to_string('accounts/email/welcome.txt', context)
+#             # send_mail(
+#             #         'Welcome to Documenter Appllication!',
+#             #         message=text,
+#             #         html_message=html,
+#             #         recipient_list=[user.email],
+#             #         from_email=settings.DEFAULT_FROM_EMAIL,
+#             #         fail_silently=False,
+#             #     )
+#             # # return HttpResponse('User Succesfully Registered')
+#             # return redirect('accounts:login')
+#         # else:
+#         #     return render(request, 'accounts/partials/register.html', {'form': form})
+#     else:
+#         # messages.ERROR(request, 'Registration Failed, kindly check your Informations')
+#         form = SignUpForm()
+#     return render(request, 'accounts/partials/register.html', {'form': form})
+#####################################################################################################
+
+def signupView(request):  
+    if request.method == 'GET':  
+        return render(request, 'accounts/partials/register.html')  
+    if request.method == 'POST':  
+        form = SignUpForm(request.POST)   
+        if form.is_valid():  
+            user = form.save(commit=True)  
+            user.is_active = False  
+            user.save()  
+            current_site = get_current_site(request)  
+            mail_subject = 'Activate your account.'  
+            message = render_to_string('accounts/partials/account_activation_email.html', {  
+                'user': user,  
+                'domain': current_site.domain,  
+                'uid': urlsafe_base64_encode(force_bytes(user.id)).decode(),  
+                'token': account_activation_token.make_token(user),  
+            })  
+            to_email = form.cleaned_data.get('email')  
+            email = EmailMessage(  
+                mail_subject, message, to=[to_email]  
+            )  
+            email.send()  
+            return HttpResponse('Please confirm your email address to complete the registration')  
+        else:  
+            form = SignUpForm()  
+        return render(request, 'accounts/partials/register.html', {'form': form})  
+
+######################################################################################
+
+
+
+####################################################################################
         
 
 def loginView(request):
@@ -143,96 +165,31 @@ def account_activation_sent_view(request):
     return render(request, 'accounts/partials/account_activation_sent.html')
 
 
-def account_activate(request, uidb64, token):
-    try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
-        user = None
+# def account_activate(request, uidb64, token):
+#     try:
+#         uid = urlsafe_base64_decode(uidb64).decode()
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+#         user = None
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return redirect('documenter:landing.html')
-    else:
-        return render(request, 'accounts/account_activation_invalid.html')
+#     if user is not None and account_activation_token.check_token(user, token):
+#         user.is_active = True
+#         user.save()
+#         login(request, user)
+#         return redirect('documenter:landing.html')
+#     else:
+#         return render(request, 'accounts/account_activation_invalid.html')
 
-# @login_required(login_url='login')
-# def home(request):
-# 	orders = Order.objects.all()
-# 	customers = Customer.objects.all()
+def account_activate(request, uidb64, token):  
+    try:  
+        uid = force_text(urlsafe_base64_decode(uidb64))  
+        user = User.objects.get(id=uid)  
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):  
+        user = None  
+    if user is not None and account_activation_token.check_token(user, token):  
+        user.is_active = True  
+        user.save()  
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')  
+    else:  
+        return HttpResponse('Activation link is invalid!')
 
-# 	total_customers = customers.count()
-
-# 	total_orders = orders.count()
-# 	delivered = orders.filter(status='Delivered').count()
-# 	pending = orders.filter(status='Pending').count()
-
-# 	context = {'orders':orders, 'customers':customers,
-# 	'total_orders':total_orders,'delivered':delivered,
-# 	'pending':pending }
-
-# 	return render(request, 'accounts/dashboard.html', context)
-
-# @login_required(login_url='login')
-# def products(request):
-# 	products = Product.objects.all()
-
-# 	return render(request, 'accounts/products.html', {'products':products})
-
-# @login_required(login_url='login')
-# def customer(request, pk_test):
-# 	customer = Customer.objects.get(id=pk_test)
-
-# 	orders = customer.order_set.all()
-# 	order_count = orders.count()
-
-# 	myFilter = OrderFilter(request.GET, queryset=orders)
-# 	orders = myFilter.qs 
-
-# 	context = {'customer':customer, 'orders':orders, 'order_count':order_count,
-# 	'myFilter':myFilter}
-# 	return render(request, 'accounts/customer.html',context)
-
-# @login_required(login_url='login')
-# def createOrder(request, pk):
-# 	OrderFormSet = inlineformset_factory(Customer, Order, fields=('product', 'status'), extra=10 )
-# 	customer = Customer.objects.get(id=pk)
-# 	formset = OrderFormSet(queryset=Order.objects.none(),instance=customer)
-# 	#form = OrderForm(initial={'customer':customer})
-# 	if request.method == 'POST':
-# 		#print('Printing POST:', request.POST)
-# 		form = OrderForm(request.POST)
-# 		formset = OrderFormSet(request.POST, instance=customer)
-# 		if formset.is_valid():
-# 			formset.save()
-# 			return redirect('/')
-
-# 	context = {'form':formset}
-# 	return render(request, 'accounts/order_form.html', context)
-
-# @login_required(login_url='login')
-# def updateOrder(request, pk):
-
-# 	order = Order.objects.get(id=pk)
-# 	form = OrderForm(instance=order)
-
-# 	if request.method == 'POST':
-# 		form = OrderForm(request.POST, instance=order)
-# 		if form.is_valid():
-# 			form.save()
-# 			return redirect('/')
-
-# 	context = {'form':form}
-# 	return render(request, 'accounts/order_form.html', context)
-
-# @login_required(login_url='login')
-# def deleteOrder(request, pk):
-# 	order = Order.objects.get(id=pk)
-# 	if request.method == "POST":
-# 		order.delete()
-# 		return redirect('/')
-
-# 	context = {'item':order}
-# 	return render(request, 'accounts/delete.html', context)

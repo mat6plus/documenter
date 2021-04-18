@@ -181,13 +181,21 @@ INTERNAL_IPS = [
 
 EMAIL_BACKEND: 'django.core.mail.backends.console.EmailBackend'
 
-# Email Settings
+# EMAIL_BACKEND: 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST: ''
-EMAIL_PORT: ''
-EMAIL_HOST_USER:''
-EMAIL_HOST_PASSWORD:''
-EMAIL_USE_TSL: ''
-EMAIL_USE_SSL: ''
+# # Email Settings
+
+# EMAIL_HOST = 'smtp.mailtrap.io'
+# EMAIL_HOST_USER = '6419bc6276e206'
+# EMAIL_HOST_PASSWORD = 'e4ff3a95eb6801'
+# EMAIL_PORT = '2525'
+
+
+# EMAIL_HOST: ''
+# EMAIL_PORT: ''
+# EMAIL_HOST_USER:''
+# EMAIL_HOST_PASSWORD:''
+# EMAIL_USE_TSL: ''
+# EMAIL_USE_SSL: ''
 
 

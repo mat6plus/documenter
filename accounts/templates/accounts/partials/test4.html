@@ -12,15 +12,8 @@
     <div class="row justify-content-center">  
         <div class="col-md-5 shadow-sm p-3 mb-5 bg-white rounded">  
             <h2>Signup</h2>  
-            <form method="post" action="{% url 'accounts:register' %}">  
+            <form method="post">  
                 {% csrf_token %}  
-				{% if messages %}
-					<ul class="messages">
-						{% for message in messages %}
-						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						{% endfor %}
-					</ul>
-					{% endif %}
                 <div class="form-group">  
                     <label for="first_name">First Name:</label>  
                     <input type="text" class="form-control" id="first_name" placeholder="Enter first name"  name="first_name">  
@@ -29,10 +22,10 @@
                     <label for="last_name">Last Name:</label>  
                     <input type="text" class="form-control" id="last_name" placeholder="Enter last name"  name="last_name">  
                 </div>  
-                <!-- <div class="form-group">  
+                <div class="form-group">  
                     <label for="username">Username:</label>  
                     <input type="text" class="form-control" id="username" placeholder="Enter username" name="username">  
-                </div>   -->
+                </div>  
                 <div class="form-group">  
                     <label for="email">Email:</label>  
                     <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">  

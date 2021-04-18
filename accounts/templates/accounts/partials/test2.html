@@ -24,7 +24,8 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100 p-t-50 p-b-90">
-				<form method="POST" class="login100-form validate-form flex-sb flex-w" action="" >
+				
+				<form method="POST" class="login100-form validate-form flex-sb flex-w" action="{% url 'accounts:register' %}" >
 					{% csrf_token %}
 					<span class="login100-form-title p-b-51">
 						Register
@@ -40,32 +41,32 @@
 
                     <div class="wrap-input100 validate-input m-b-16" data-validate = "">
 						<input class="input100" type="text" name="first_name" placeholder="Enter First Name">
-						<span class="focus-input100">{{form.first_name}}</span>
+						<span class="focus-input100"></span>
 						
 					</div>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "">
 						<input class="input100" type="text" name="last_name" placeholder="Enter Last Name">
-						<span class="focus-input100">{{form.last_name}}</span>
+						<span class="focus-input100"></span>
 						
 					</div>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Email is required">
 						<input class="input100" type="text" name="email" placeholder="Enter Email">
-						<span class="focus-input100">{{form.email}}</span>
+						<span class="focus-input100"></span>
 						
 					</div>
 
 					
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
 						<input class="input100" type="password" name="password" placeholder="Enter Password">
-						<span class="focus-input100">{{form.password}}</span>
+						<span class="focus-input100"></span>
 						
 					</div>
 
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
 						<input class="input100" type="password" name="password2" placeholder="Repeat Password">
-						<span class="focus-input100">{{form.password2}}</span>
+						<span class="focus-input100"></span>
 						
 					</div>
 					
