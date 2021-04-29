@@ -1,27 +1,28 @@
 from django.urls import path
 from . import views
-
-from accounts.views import signupView, ChangeProfileView
-from django.contrib.auth.views import LoginView, LogoutView, \
-    PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, \
-    PasswordResetDoneView
+from accounts.views import *
+#from accounts.views import signupView, loginView, logoutUser, ChangeProfileView, account_activation_sent_view
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView
+# from django.contrib.auth.views import LoginView, LogoutView, 
+#     PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, \
+#     PasswordResetDoneView
 
 app_name = 'accounts'
 
 
 urlpatterns = [
 
-    path('', LoginView.as_view(
-        redirect_authenticated_user=True,
-        template_name='accounts/partials/login.html',
-    ), name='login'),
+    # path('', LoginView.as_view(), name='login'),
+    path('', views.loginView, name='login'),
+    #path('activate/<slug:uidb64>/<slug:token>)/', views.account_activate, name='activate'),
 
-   # path('home/', signupView, name='home'),
-    path('activate/<slug:uidb64>/<slug:token>)/', views.account_activate, name='activate'),
+    path('activate/<uidb64>/<token>',
+         views.account_activate.as_view(), name='activate'),
 
-    path('register/', signupView, name='register'),
+    path('register/', signupView.as_view(), name='register'),
 
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', logoutView.as_view(), name='logout'),
+   # path("logout/", views.logoutUser, name="logout"),
 
     path('password_reset/', PasswordResetView.as_view(
         template_name='accounts/partials/password_reset.html',

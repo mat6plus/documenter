@@ -10,7 +10,9 @@ from accounts.token import account_activation_token
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View, FormView
-#from validate_email import validate_email
+from validate_email import validate_email
+from django.urls import reverse
+
 from django.contrib.auth import get_user_model, login
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -20,125 +22,122 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from accounts.models import *
-from accounts.forms import SignUpForm, UserEditForm
+from accounts.forms import SignUpForm, LoginForm, UserEditForm
 
 User = get_user_model()
 
-# def home(request):
-#     context=[]
-#     return render (request, 'documenter/_partials/home.html')
-
-# def signupView(request):
-#     if request.user.is_authenticated:
-#         return redirect('documenter:home')
-#     if request.method == 'POST':
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             user.refresh_from_db()
-#             user.profile.first_name = form.cleaned_data.get('first_name')
-#             user.profile.last_name = form.cleaned_data.get('last_name')
-#             user.profile.email = form.cleaned_data.get('email')
-#             user.is_active = False
-#             user.save()
-
-#             messages.success(request, "Registration successful. An activation email has been sent" )
-#             user.is_active = False
-#             current_site = get_current_site(request)
-
-#             subject = 'Activate your Documenter Account'
-#             message = render_to_string('accounts/partials/account_activation_email.html', {
-#                 'user': user,
-#                 'domain': current_site.domain,
-#                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-#                 'token': account_activation_token.make_token(user),
-#             })
-#             user.send_mail(subject=subject, message=message)
-#             messages.SUCCESS(request, f'Registered succesfully and Activation Email Sent')
-#             return redirect('accounts/partials/account_activation_sent.html')
-            
-#             # context = {
-#             #         'email': user.email,
-#             #         'protocol': 'https' if request.is_secure() else "http",
-#             #         'domain': request.get_host(),
-#             #     }
-#             # html = render_to_string('accounts/email/welcome.html', context)
-#             # text = render_to_string('accounts/email/welcome.txt', context)
-#             # send_mail(
-#             #         'Welcome to Documenter Appllication!',
-#             #         message=text,
-#             #         html_message=html,
-#             #         recipient_list=[user.email],
-#             #         from_email=settings.DEFAULT_FROM_EMAIL,
-#             #         fail_silently=False,
-#             #     )
-#             # # return HttpResponse('User Succesfully Registered')
-#             # return redirect('accounts:login')
-#         # else:
-#         #     return render(request, 'accounts/partials/register.html', {'form': form})
-#     else:
-#         # messages.ERROR(request, 'Registration Failed, kindly check your Informations')
-#         form = SignUpForm()
-#     return render(request, 'accounts/partials/register.html', {'form': form})
-#####################################################################################################
-
-def signupView(request):  
-    if request.method == 'GET':  
-        return render(request, 'accounts/partials/register.html')  
-    if request.method == 'POST':  
-        form = SignUpForm(request.POST)   
-        if form.is_valid():  
-            user = form.save(commit=True)  
-            user.is_active = False  
-            user.save()  
-            current_site = get_current_site(request)  
-            mail_subject = 'Activate your account.'  
-            message = render_to_string('accounts/partials/account_activation_email.html', {  
-                'user': user,  
-                'domain': current_site.domain,  
-                'uid': urlsafe_base64_encode(force_bytes(user.id)).decode(),  
-                'token': account_activation_token.make_token(user),  
-            })  
-            to_email = form.cleaned_data.get('email')  
-            email = EmailMessage(  
-                mail_subject, message, to=[to_email]  
-            )  
-            email.send()  
-            return HttpResponse('Please confirm your email address to complete the registration')  
-        else:  
-            form = SignUpForm()  
-        return render(request, 'accounts/partials/register.html', {'form': form})  
-
 ######################################################################################
+class signupView(View):
+    def get(self, request):
+        return render(request, 'accounts/partials/register.html')
 
+    def post(self, request):
+        context = {
+            'data': request.POST,
+            'has_error': False
+        }
+
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
+        if len(password) < 6:
+            messages.add_message(request, messages.ERROR,
+                                 'passwords should be atleast 6 characters long')
+            context['has_error'] = True
+        if password != password2:
+            messages.add_message(request, messages.ERROR,
+                                 'passwords dont match')
+            context['has_error'] = True
+
+        if not validate_email(email):
+            messages.add_message(request, messages.ERROR,
+                                 'Please provide a valid email')
+            context['has_error'] = True
+
+        try:
+            if User.objects.get(email=email):
+                messages.add_message(request, messages.ERROR, 'Email already registered by another user')
+                context['has_error'] = True
+
+        except Exception as identifier:
+            pass
+
+        if context['has_error']:
+            return render(request, 'accounts/partials/register.html', context, status=400)
+
+        user = User.objects.create_user(email=email, password = password)
+        user.set_password(password)
+        user.last_name = last_name
+        user.is_active = False
+        user.save()
+
+        current_site = get_current_site(request)
+        subject = 'Active your Account'
+        message = render_to_string('accounts/partials/account_activation_email.html',
+                                   {
+                                       'user': user,
+                                       'domain': current_site.domain,
+                                       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                       'token': account_activation_token.make_token(user)
+                                   }
+                                   )
+ 
+        to_email = request.POST.get('email')  
+        email = EmailMessage(  
+                subject, message, to=[to_email]  
+                )  
+
+        if not context['has_error']:
+            email.send()
+            messages.add_message(request, messages.SUCCESS,'We sent you an email to verify your account')
+            return redirect('accounts/partials/account_activation_sent.html')
+
+        return redirect('accounts/partials/login.html')
 
 
 ####################################################################################
-        
+
+# def logoutUser(request):
+    
+#     logout(request)
+#     messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
+#     return redirect(reverse('login'))
+
+class logoutView(View):
+    def post(self, request):
+        logout(request)
+        messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
+        return redirect('accounts:login')
+
+#####################################################################################
 
 def loginView(request):
-	if request.user.is_authenticated:
-		return redirect('home')
-	else:
-		if request.method == 'POST':
-			username = request.POST.get('username')
-			password =request.POST.get('password')
+    if request.user.is_authenticated:
+        return redirect ('documenter/_partials/home.html')
+    else:
+    
+        if request.method == 'POST':
+            context = {'data': request.POST}
+            email = request.POST.get('email')
+            password = request.POST.get('password')
 
-			user = authenticate(request, username=username, password=password)
+            user = authenticate(request, email=email, password=password)
 
-			if user is not None:
-				login(request, user)
-				return redirect('home')
-			else:
-				messages.info(request, 'Username OR password is incorrect')
+            if user and not user.is_email_verified:
+                messages.add_message(request, messages.ERROR, 'Email is not verified, please check your email inbox')
+                return render(request, 'accounts/partials/login.html', context, status=401)
 
-		context = {}
-		return render(request, 'accounts/login.html', context)
+            if not user:
+                messages.add_message(request, messages.ERROR, 'Invalid credentials, try again')
+                return render(request, 'accounts/partials/login.html', context, status=401)
 
-def logoutUser(request):
-	logout(request)
-	return redirect('login')
+            login(request, user)
 
+            messages.add_message(request, messages.SUCCESS, f'Welcome {user.username}')
+            return redirect(reverse('home'))
+        return render(request, 'accounts/partials/login.html')
 
 class ChangeProfileView(LoginRequiredMixin, FormView):
     template_name = 'accounts/partials/profile.html'
@@ -157,39 +156,26 @@ class ChangeProfileView(LoginRequiredMixin, FormView):
         user.last_name = form.cleaned_data['last_name']
         user.save()
 
-        messages.success(self.request, _('Profile data has been successfully updated.'))
+        messages.success(self.request, ('Profile data has been successfully updated.'))
 
         return redirect('accounts:change_profile')
+
 
 def account_activation_sent_view(request):
     return render(request, 'accounts/partials/account_activation_sent.html')
 
-
-# def account_activate(request, uidb64, token):
-#     try:
-#         uid = urlsafe_base64_decode(uidb64).decode()
-#         user = User.objects.get(pk=uid)
-#     except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
-#         user = None
-
-#     if user is not None and account_activation_token.check_token(user, token):
-#         user.is_active = True
-#         user.save()
-#         login(request, user)
-#         return redirect('documenter:landing.html')
-#     else:
-#         return render(request, 'accounts/account_activation_invalid.html')
-
-def account_activate(request, uidb64, token):  
-    try:  
-        uid = force_text(urlsafe_base64_decode(uidb64))  
-        user = User.objects.get(id=uid)  
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):  
-        user = None  
-    if user is not None and account_activation_token.check_token(user, token):  
-        user.is_active = True  
-        user.save()  
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')  
-    else:  
-        return HttpResponse('Activation link is invalid!')
+class account_activate(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except Exception as identifier:
+            user = None
+        if user is not None and account_activation_token.check_token(user, token):
+            user.is_active = True
+            user.save()
+            messages.add_message(request, messages.SUCCESS,
+                                 'account activated successfully')
+            return redirect('accounts:login')
+        return render(request, 'accounts/partials/account_activation_invalid.html', status=401)
 

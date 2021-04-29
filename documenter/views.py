@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Searcher
-from .forms import SearchForm, DocumentForm
+from documenter.models import Searcher
+from documenter.forms import SearchForm, DocumentForm
 from taggit.models import Tag
 
 
@@ -19,6 +19,11 @@ from taggit.models import Tag
 #     return None
 
 # Create your views here.
+@login_required
+def homeView(View):
+    pass
+
+
 @login_required
 def searchView(View):
     def get(self, request, *args, **kwargs):

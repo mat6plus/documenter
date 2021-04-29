@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from documenter.models import Searcher
-from accounts.models import Profile, User
+from accounts.models import CustomUser
 
 User = get_user_model()
 
