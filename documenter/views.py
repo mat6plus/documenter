@@ -18,10 +18,16 @@ from taggit.models import Tag
 #         return qs[0]
 #     return None
 
-# Create your views here.
+# Create your views here
 @login_required
-def homeView(View):
-    pass
+class homeView(View):
+    def get(self, request):
+        return render(request, 'home.html')
+
+
+# @login_required
+# def homeView(View):
+#     pass
 
 
 @login_required

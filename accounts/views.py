@@ -92,19 +92,12 @@ class signupView(View):
         if not context['has_error']:
             email.send()
             messages.add_message(request, messages.SUCCESS,'We sent you an email to verify your account')
-            return redirect('accounts/partials/account_activation_sent.html')
+            #return render(request, 'accounts/partials/account_activation_sent.html')
 
-        return redirect('accounts/partials/login.html')
+        return redirect('login')
 
 
 ####################################################################################
-
-# def logoutUser(request):
-    
-#     logout(request)
-#     messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
-#     return redirect(reverse('login'))
-
 class logoutView(View):
     def post(self, request):
         logout(request)
@@ -113,31 +106,62 @@ class logoutView(View):
 
 #####################################################################################
 
-def loginView(request):
-    if request.user.is_authenticated:
-        return redirect ('documenter/_partials/home.html')
-    else:
+# def loginView(request):
+#     if request.user.is_authenticated:
+#         return redirect ('documenter/_partials/home.html')
+#     else:
     
-        if request.method == 'POST':
-            context = {'data': request.POST}
-            email = request.POST.get('email')
-            password = request.POST.get('password')
+#         if request.method == 'POST':
+#             context = {'data': request.POST}
+#             email = request.POST.get('email')
+#             password = request.POST.get('password')
 
-            user = authenticate(request, email=email, password=password)
+#             user = authenticate(request, email=email, password=password)
 
-            if user and not user.is_email_verified:
-                messages.add_message(request, messages.ERROR, 'Email is not verified, please check your email inbox')
-                return render(request, 'accounts/partials/login.html', context, status=401)
+#             if user and not user.is_email_verified:
+#                 messages.add_message(request, messages.ERROR, 'Email is not verified, please check your email inbox')
+#                 return render(request, 'accounts/partials/login.html', context, status=401)
 
-            if not user:
-                messages.add_message(request, messages.ERROR, 'Invalid credentials, try again')
-                return render(request, 'accounts/partials/login.html', context, status=401)
+#             if not user:
+#                 messages.add_message(request, messages.ERROR, 'Invalid credentials, try again')
+#                 return render(request, 'accounts/partials/login.html', context, status=401)
 
-            login(request, user)
+#             login(request, user)
 
-            messages.add_message(request, messages.SUCCESS, f'Welcome {user.username}')
-            return redirect(reverse('home'))
-        return render(request, 'accounts/partials/login.html')
+#             messages.add_message(request, messages.SUCCESS, f'Welcome {user.username}')
+#             return redirect(reverse('home'))
+#         return render(request, 'accounts/partials/login.html')
+###################################################################################################
+
+class loginView(View):
+    def get(self, request):
+        return render(request, 'accounts/partials//login.html')
+
+    def post(self, request):
+        context = {
+            'data': request.POST,
+            'has_error': False
+        }
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        if email == '':
+            messages.add_message(request, messages.ERROR,
+                                 'Email is required')
+            context['has_error'] = True
+        if password == '':
+            messages.add_message(request, messages.ERROR,
+                                 'Password is required')
+            context['has_error'] = True
+        user = authenticate(request, email=email, password=password)
+
+        if not user and not context['has_error']:
+            messages.add_message(request, messages.ERROR, 'Invalid login')
+            context['has_error'] = True
+
+        if context['has_error']:
+            return render(request, 'accounts/partials/login.html', context=context)
+        login(request, user)
+        return redirect('documenter:home')
 
 class ChangeProfileView(LoginRequiredMixin, FormView):
     template_name = 'accounts/partials/profile.html'

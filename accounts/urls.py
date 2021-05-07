@@ -12,9 +12,8 @@ app_name = 'accounts'
 
 urlpatterns = [
 
-    # path('', LoginView.as_view(), name='login'),
-    path('', views.loginView, name='login'),
-    #path('activate/<slug:uidb64>/<slug:token>)/', views.account_activate, name='activate'),
+    path('', loginView.as_view(), name='login'),
+    # path('', views.loginView, name='login'),
 
     path('activate/<uidb64>/<token>',
          views.account_activate.as_view(), name='activate'),

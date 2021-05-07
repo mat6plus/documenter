@@ -19,8 +19,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
-    path('documenter/', include('documenter.urls')),
+    path('', include('accounts.urls', namespace='accounts')),
+    path('documenter/', include('documenter.urls', namespace='documenter')),
 ]
 
 if settings.DEBUG:
