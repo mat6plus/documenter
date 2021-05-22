@@ -2,6 +2,7 @@ from django.db.models import Count, Q
 from django.shortcuts import render, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -19,10 +20,25 @@ from taggit.models import Tag
 #     return None
 
 # Create your views here
-@login_required
-class homeView(View):
-    def get(self, request):
-        return render(request, 'home.html')
+# class homeView(View):
+
+#     @method_decorator(login_required)
+#     def dispatch(self, *args, **kwargs):
+#         return super(homeView, self).dispatch(*args, **kwargs)
+
+#     def get(self, request):
+#         return render(request, 'home.html')
+
+def homeView(request):
+    if not request.user.is_authenticated:
+        return render(request, '_partial/home.html')
+    elif not request.user.is_authenticated:
+        return redirect('accounts:register')
+
+#def home(self, request):
+
+
+
 
 
 # @login_required
@@ -31,7 +47,7 @@ class homeView(View):
 
 
 @login_required
-def searchView(View):
+class searchView(View):
     def get(self, request, *args, **kwargs):
         queryset = Searcher.objects.all()
         query = request.GET.get('q')

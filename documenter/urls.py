@@ -7,10 +7,10 @@ from documenter.views import *
 
 
 urlpatterns = [
-    path('home/', searchView, name='home'),
-    #path('home/', homeView.as_view(), name='home'),
-    path('result/', SearchResultView, name='result'),
-    path('details/', SearchDetails, name='details'),
+    path('home/', views.homeView, name='home'),
+    path('search/', views.searchView, name='search'),
+    path('result/', views.SearchResultView, name='result'),
+    path('details/', views.SearchDetails, name='details'),
 ]
 
 app_name = 'documenter'

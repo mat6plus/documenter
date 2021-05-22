@@ -94,44 +94,27 @@ class signupView(View):
             messages.add_message(request, messages.SUCCESS,'We sent you an email to verify your account')
             #return render(request, 'accounts/partials/account_activation_sent.html')
 
-        return redirect('login')
+        return redirect('accounts:login')
 
 
 ####################################################################################
-class logoutView(View):
-    def post(self, request):
+# class logoutView(View):
+#     def post(self, request):
+#         logout(request)
+#         messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
+#         return redirect('accounts:login')
+
+####################################################################################
+def logout_request(request):
         logout(request)
-        messages.add_message(request, messages.SUCCESS, 'Successfully logged out')
-        return redirect('accounts:login')
+        messages.info(request, "You have successfully logged out.") 
+        return redirect("accounts:login")
 
-#####################################################################################
-
-# def loginView(request):
-#     if request.user.is_authenticated:
-#         return redirect ('documenter/_partials/home.html')
-#     else:
-    
-#         if request.method == 'POST':
-#             context = {'data': request.POST}
-#             email = request.POST.get('email')
-#             password = request.POST.get('password')
-
-#             user = authenticate(request, email=email, password=password)
-
-#             if user and not user.is_email_verified:
-#                 messages.add_message(request, messages.ERROR, 'Email is not verified, please check your email inbox')
-#                 return render(request, 'accounts/partials/login.html', context, status=401)
-
-#             if not user:
-#                 messages.add_message(request, messages.ERROR, 'Invalid credentials, try again')
-#                 return render(request, 'accounts/partials/login.html', context, status=401)
-
-#             login(request, user)
-
-#             messages.add_message(request, messages.SUCCESS, f'Welcome {user.username}')
-#             return redirect(reverse('home'))
-#         return render(request, 'accounts/partials/login.html')
 ###################################################################################################
+
+#Validation that user exist during login if not it should display associated error of user not existing.
+
+#########################################################################
 
 class loginView(View):
     def get(self, request):
@@ -161,10 +144,13 @@ class loginView(View):
         if context['has_error']:
             return render(request, 'accounts/partials/login.html', context=context)
         login(request, user)
-        return redirect('documenter:home')
+        #return redirect('documenter:home')
+        return render(request, 'documenter/_partials/home.html', context=context)
 
+
+@login_required
 class ChangeProfileView(LoginRequiredMixin, FormView):
-    template_name = 'accounts/partials/profile.html'
+    template_name = 'accounts/partials/userprofile.html'
     form_class = UserEditForm
 
     def get_initial(self):

@@ -3,9 +3,7 @@ from . import views
 from accounts.views import *
 #from accounts.views import signupView, loginView, logoutUser, ChangeProfileView, account_activation_sent_view
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, PasswordResetDoneView
-# from django.contrib.auth.views import LoginView, LogoutView, 
-#     PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView, \
-#     PasswordResetDoneView
+from django.contrib.auth import views as auth_views
 
 app_name = 'accounts'
 
@@ -20,7 +18,9 @@ urlpatterns = [
 
     path('register/', signupView.as_view(), name='register'),
 
-    path('logout/', logoutView.as_view(), name='logout'),
+    # path('logout/', logoutView.as_view(), name='logout'),
+    path("logout", views.logout_request, name= "logout"),
+    
    # path("logout/", views.logoutUser, name="logout"),
 
     path('password_reset/', PasswordResetView.as_view(
@@ -51,5 +51,5 @@ urlpatterns = [
         ),
         name='password_reset_complete'
     ),
-    path('change/profile/', ChangeProfileView.as_view(), name='change_profile'),
+    path('change_profile', views.ChangeProfileView, name='change_profile'),
 ]

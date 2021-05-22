@@ -139,16 +139,13 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 LOGIN_URL = 'accounts/login'
 LOGIN_REDIRECT_URL = 'documenter/home'
-LOGOUT_REDIRECT_URL = 'accounts/logout'
+LOGOUT_REDIRECT_URL = 'accounts/login'
 
 
 """ LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('documenter/home')
 LOGOUT_REDIRECT_URL = reverse_lazy('login') """
 
-""" AUTH_USER_MODEL = 'account.UserBase'
-LOGIN_REDIRECT_URL = '/account/dashboard'
-LOGIN_URL = '/account/login/' """
 
 
 # Internationalization
