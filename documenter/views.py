@@ -29,21 +29,12 @@ from taggit.models import Tag
 #     def get(self, request):
 #         return render(request, 'home.html')
 
+@login_required
 def homeView(request):
     if not request.user.is_authenticated:
-        return render(request, '_partial/home.html')
+        return render(request, 'documenter/_partial/home.html')
     elif not request.user.is_authenticated:
         return redirect('accounts:register')
-
-#def home(self, request):
-
-
-
-
-
-# @login_required
-# def homeView(View):
-#     pass
 
 
 @login_required
@@ -56,33 +47,31 @@ class searchView(View):
                 Q(title__icontains=query) |
                 Q(description__icontains=query)
             ).distinct()
-        context = {
-            'queryset': queryset
-        }
-        return render(request, '_partials/searchResult.html', context) 
+        context = {'queryset': queryset}
+        return render(request, 'documenter/_partials/searchResult.html', context) 
 
-def search(request):
-    queryset = Searcher.objects.all()
-    query = request.GET.get('q')
-    if query:
-        queryset = queryset.filter(
-            Q(title__icontains=query) |
-            Q(description__icontains=query)
-        ).distinct()
-    context = {
-        'queryset': queryset
-    }
-    return render(request, '_partials/searchResult.html', context)
+# def search(request):
+#     queryset = Searcher.objects.all()
+#     query = request.GET.get('q')
+#     if query:
+#         queryset = queryset.filter(
+#             Q(title__icontains=query) |
+#             Q(description__icontains=query)
+#         ).distinct()
+#     context = {
+#         'queryset': queryset
+#     }
+#     return render(request, '_partials/searchResult.html', context)
 
 @login_required
 class SearchResultView(ListView):
     queryset = Searcher.objects.all()
     context_object_name = 'searches'
     paginate_by = 10
-    template_name = '../_partials/searchResult.html'
+    template_name = 'documenter/_partials/searchResult.html'
 
 def searchResult(request, tag_slug=None):
-    object_list = Searcher.objetcs.all()
+    object_list = Searcher.objects.all()
     tag = None
 
     if tag_slug:
