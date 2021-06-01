@@ -16,6 +16,7 @@
 	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 	<link rel="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" type="text/css" href={% static '/css/nav.css' %}>
+	<link rel="stylesheet" type="text/css" href={% static '/css/button.css' %}>
     <!-- <link media="all" type="text/css" rel="stylesheet" href="/css/nav.css"> -->
 
 </head>
@@ -37,6 +38,9 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#">Document Solution</a></li>
+			<li><a href="#" class="btn btn-accent btn-action-lg btn-raised"><i class="material-icons">add</i></a></li>
+
 			<li><a href="">Welcome {{user.last_name}}</a></li>	
 			<ul class="nav navbar-nav">
 				<!-- <li><a href="#"><i class="fa fa-bell-o fa-lg" aria-hidden="true"></i></a></li> -->

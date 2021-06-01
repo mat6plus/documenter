@@ -13,8 +13,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 import time
+from dotenv import load_dotenv
 from django.urls import reverse_lazy
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +30,7 @@ TEMPLATE_DIR = os.path.join(BASE_DIR, 'templates')
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'c=9c_qmv36k#lzqbp-*7j%0lj+roolf$h6h$0@)+jti4hxwe$$'
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -97,17 +100,28 @@ WSGI_APPLICATION = 'documenterapp.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': os.environ.get('DB_NAME'),
+#             'USER': os.environ.get('DB_USER'),
+#             'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
+#             'HOST': os.environ.get('DB_HOST'),
+#             'PORT': os.environ.get('DB_PORT'),
+#         }
+# } 
+
+
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': int(os.environ.get('DB_PORT')),
+            'NAME': str(os.getenv('DB_NAME')),
+            'USER': str(os.getenv('DB_USER')),
+            'PASSWORD': (os.getenv('DB_USER_PASSWORD')),
+            'HOST': (os.getenv('DB_HOST')),
+            'PORT': int(os.getenv('DB_PORT')),
         }
 } 
-
 
 # if DEBUG:
 #     DATABASES = {
