@@ -11,6 +11,8 @@ urlpatterns = [
     path('search/', views.searchView, name='search'),
     path('result/', views.SearchResultView, name='result'),
     path('details/', views.SearchDetails, name='details'),
+    # path('document', views.DocumenterView, name='document'),
+    path('document', DocumenterView.as_view(), name='document'),
 ]
 
 app_name = 'documenter'

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     
     'documenter',
     'accounts',
@@ -100,16 +101,7 @@ WSGI_APPLICATION = 'documenterapp.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#             'NAME': os.environ.get('DB_NAME'),
-#             'USER': os.environ.get('DB_USER'),
-#             'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
-#             'HOST': os.environ.get('DB_HOST'),
-#             'PORT': os.environ.get('DB_PORT'),
-#         }
-# } 
+
 
 
 DATABASES = {
@@ -131,16 +123,18 @@ DATABASES = {
 #         }
 #     }
 # else:
-#     DATABASES = {
+# DATABASES = {
 #         'default': {
 #             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#             'NAME': 'documenter',
-#             'USER': 'adminuser',
-#             'PASSWORD': 'matman020',
-#             'HOST': 'localhost',
-#             'PORT': '',
+#             'NAME': str(os.getenv('DB_NAME')),
+#             'USER': str(os.getenv('DB_USER')),
+#             'PASSWORD': (os.getenv('DB_USER_PASSWORD')),
+#             'HOST': (os.getenv('DB_HOST')),
+#             'PORT': int(os.getenv('DB_PORT')),
 #         }
 #     } 
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

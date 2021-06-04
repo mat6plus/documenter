@@ -89,7 +89,7 @@ def searchResult(request, tag_slug=None):
         # If page is out of range deliver last page of results
         searchResult = paginator.page(paginator.num_pages)
     return render(request,
-                 '../_partials/searchResult.html',
+                 'documenter/_partials/searchResult.html',
                  {'page': page,
                   'searchResult': searchResult,
                   'tag': tag})
@@ -99,7 +99,9 @@ def searchResult(request, tag_slug=None):
 
 class SearchDetails(DetailView):
     model = Searcher
-    template_name = '../_partials/landing.html'
+    template_name = 'documenter/_partials/landing.html'
 
-
-
+@login_required
+class DocumenterView(CreateView):
+    model = Searcher
+    template_name = "documenter/_partials/documenter.html"
