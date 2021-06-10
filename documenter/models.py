@@ -15,14 +15,18 @@ class Searcher (models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     solution_image = models.ImageField(default=None)
-    tags = TaggableManager()
     author = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None)
+    tags = TaggableManager()
+    
 
     class Meta:
         ordering = ('-created',)
 
     def __str__(self):
         return self.title
+    
+    def get_full_name(self):
+        return f'{self.first_name}+{self.last_name}'
     
     def get_absolute_url(self):
             return reverse('title:description', args=[self.created.year, self.created.month, self.created.day, self.slug])

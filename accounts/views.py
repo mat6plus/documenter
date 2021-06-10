@@ -145,7 +145,7 @@ class loginView(View):
             return render(request, 'accounts/partials/login.html', context=context)
         login(request, user)
         #return redirect('documenter:home')
-        return render(request, 'documenter/_partials/home.html', context=context)
+        return render(request, 'documenter/_partials/searchResult.html', context=context)
 
 
 @login_required

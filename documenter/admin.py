@@ -1,12 +1,13 @@
 from django.contrib import admin
-from .models import Searcher
+from documenter.models import Searcher
+from accounts.models import CustomUser
 
 # Register your models here
 
-@admin.register (Searcher)
+@admin.register (Searcher )
 
 class SearchAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug','created','author')
+    list_display = ('title', 'slug','created','author','tags')
     list_filter = ('created','title')
     search_fields = ('title', 'description')
     prepopulated_fields = {'slug': ('title',)}
